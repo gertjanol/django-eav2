@@ -26,7 +26,8 @@ from .validators import (
     validate_date,
     validate_bool,
     validate_object,
-    validate_enum
+    validate_enum,
+    validate_json
 )
 from .exceptions import IllegalAssignmentException
 from .fields import EavDatatypeField, EavSlugField
@@ -98,7 +99,7 @@ class Attribute(models.Model):
        to save or create any entity object for which this attribute applies,
        without first setting this EAV attribute.
 
-    There are 7 possible values for datatype:
+    There are 8 possible values for datatype:
 
         * int (TYPE_INT)
         * float (TYPE_FLOAT)
@@ -107,6 +108,7 @@ class Attribute(models.Model):
         * bool (TYPE_BOOLEAN)
         * object (TYPE_OBJECT)
         * enum (TYPE_ENUM)
+        * json (TYPE_JSON)
 
     Examples::
 
@@ -138,6 +140,7 @@ class Attribute(models.Model):
     TYPE_BOOLEAN = 'bool'
     TYPE_OBJECT  = 'object'
     TYPE_ENUM    = 'enum'
+    TYPE_JSON    = 'json'
 
     DATATYPE_CHOICES = (
         (TYPE_TEXT,    _('Text')),
@@ -147,6 +150,7 @@ class Attribute(models.Model):
         (TYPE_BOOLEAN, _('True / False')),
         (TYPE_OBJECT,  _('Django Object')),
         (TYPE_ENUM,    _('Multiple Choice')),
+        (TYPE_JSON,    _('JSON')),
     )
 
     # Core attributes
@@ -248,6 +252,7 @@ class Attribute(models.Model):
             'bool':   validate_bool,
             'object': validate_object,
             'enum':   validate_enum,
+            'json':   validate_json,
         }
 
         return [DATATYPE_VALIDATORS[self.datatype]]
@@ -390,6 +395,7 @@ class Value(models.Model):
         on_delete    = models.PROTECT,
         related_name = 'eav_values'
     )
+    value_json  = models.JSONField(blank = True, null = True)
 
     generic_value_id = models.IntegerField(blank=True, null=True)
 

@@ -83,3 +83,10 @@ def validate_enum(value):
 
     if isinstance(value, EnumValue) and not value.pk:
         raise ValidationError(_(u"EnumValue has not been saved yet"))
+
+
+def validate_json(value):
+    """
+    Input is already validated by the Django JSONField
+    """
+    pass

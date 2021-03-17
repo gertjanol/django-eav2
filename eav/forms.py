@@ -1,10 +1,10 @@
 """This module contains forms used for admin integration."""
-
+import json
 from copy import deepcopy
 
 from django.contrib.admin.widgets import AdminSplitDateTime
 from django.forms import (BooleanField, CharField, ChoiceField, DateTimeField,
-                          FloatField, IntegerField, ModelForm)
+                          FloatField, IntegerField, ModelForm, JSONField)
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -37,6 +37,7 @@ class BaseDynamicEntityForm(ModelForm):
         'date': DateTimeField,
         'bool': BooleanField,
         'enum': ChoiceField,
+        'json': JSONField,
     }
 
     def __init__(self, data=None, *args, **kwargs):
@@ -78,7 +79,10 @@ class BaseDynamicEntityForm(ModelForm):
             self.fields[attribute.slug] = MappedField(**defaults)
 
             # Fill initial data (if attribute was already defined).
-            if value and not datatype == attribute.TYPE_ENUM:
+            if datatype == attribute.TYPE_JSON:
+                self.initial[attribute.slug] = value
+
+            elif value and not datatype == attribute.TYPE_ENUM:
                 self.initial[attribute.slug] = value
 
     def save(self, commit=True):
